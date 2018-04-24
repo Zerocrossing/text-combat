@@ -8,7 +8,7 @@ verbs and adverbs:
 
 from stats import Stats
 from verbs import Verb
-from adverbs import Adverb
+from adjectives import Adjective
 
 
 class Player:
@@ -18,7 +18,7 @@ class Player:
         self.health = 0
         self.stamina = 100
         self.verbs = {}
-        self.adverbs = {}
+        self.adjectives = {}
         self.next_sentence = None
 
     # region Stat-based Getters
@@ -64,12 +64,11 @@ class Player:
         adds a word to the appropriate dictionary for it's class type
         Returns true if word was successfully added
         :word: object of word type (verb, adverb ect.)
-        todo: do we deepcopy the word?
         """
         if isinstance(word, Verb):
             self.add_verb(word, count)
             return True
-        if isinstance(word, Adverb):
+        if isinstance(word, Adjective):
             self.add_adverb(word, count)
             return True
         return False
@@ -108,10 +107,10 @@ class Player:
         if the adverb doesn't exist, add it with count 1
         """
         name = word.name
-        if name in self.adverbs.keys():
-            self.adverbs[name][1] += count
+        if name in self.adjectives.keys():
+            self.adjectives[name][1] += count
         else:
-            self.adverbs[name] = [word, count]
+            self.adjectives[name] = [word, count]
 
     # endregion
 

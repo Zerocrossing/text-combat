@@ -5,7 +5,7 @@ import actor
 import player
 import random
 from verbs import *
-from adverbs import *
+from adjectives import *
 from sentence import *
 from util import *
 
@@ -55,20 +55,20 @@ def player_turn(fighter, opponent):
         verb = fighter.verbs[verb][0]
         # print("You have selected {}".format(verb.name))
         break
-    if any(fighter.adverbs):
-        print("Your Adverbs: ")
-        for key, val in fighter.adverbs.items():
+    if any(fighter.adjectives):
+        print("Your adjectives: ")
+        for key, val in fighter.adjectives.items():
             print('\t' + key + '\t' + str(val[1]))
     while True:
-        adverb = input("What kind of {}? (choose an adverb)".format(verb.name))
-        if adverb not in fighter.adverbs.keys():
+        adjective = input("What kind of {}? (choose an adjective)".format(verb.name))
+        if adjective not in fighter.adjectives.keys():
             print("That is not a valid action.")
             continue
-        adverb = fighter.adverbs[adverb][0]
-        # print("You have selected {}".format(adverb.name))
+        adjective = fighter.adjectives[adjective][0]
+        # print("You have selected {}".format(adjective.name))
         break
 
-    sentence = Sentence(fighter, verb, adverb, opponent)
+    sentence = Sentence(fighter, verb, adjective, opponent)
     return sentence
 
 
@@ -128,14 +128,14 @@ class Goblin(actor.Actor):
         for verb in Verb.__subclasses__():
             word = verb()
             self.verbs[word.name] = [word, 99]
-        for adverb in Adverb.__subclasses__():
-            word = adverb()
-            self.adverbs[word.name] = [word, 99]
+        for adjective in Adjective.__subclasses__():
+            word = adjective()
+            self.adjectives[word.name] = [word, 99]
 
     def create_random_sentence(self, target):
         verb = random.choice([v[0] for v in self.verbs.values()])
-        adverb = random.choice([adv[0] for adv in self.adverbs.values()])
-        sentence = Sentence(self, verb, adverb, target)
+        adjective = random.choice([adv[0] for adv in self.adjectives.values()])
+        sentence = Sentence(self, verb, adjective, target)
         return sentence
 
     def __str__(self):

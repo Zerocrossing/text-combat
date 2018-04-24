@@ -30,20 +30,23 @@ class Word:
                     return True
         return False
 
-    def setup(self, subject, target=None, other_word=None):
-        """
-        setup is run before damage and effects are assigned
-        damage reduction, blocks, and checks can be done here
-        it is not required and can be passed
-        """
-        raise NotImplementedError
+    # def setup(self, subject, target=None, other_word=None):
+    #     """
+    #     setup is run before damage and effects are assigned
+    #     damage reduction, blocks, and checks can be done here
+    #     it is not required and can be passed
+    #     """
+    #     raise NotImplementedError
+    #
+    # def execute(self, subject, target=None, other_word=None):
+    #     """
+    #     execute assigns damage and effects after setup is run
+    #     it is not required and can be passed
+    #     """
+    #     raise NotImplementedError
 
-    def execute(self, subject, target=None, other_word=None):
-        """
-        execute assigns damage and effects after setup is run
-        it is not required and can be passed
-        """
-        raise NotImplementedError
+    def __str__(self):
+        return self.name
 
 
 class Verb(Word):
@@ -57,15 +60,9 @@ class Verb(Word):
     Execute performs the action
     attributes:
         freshness:      a metric that modifies power and decreases with each usage of the word
-        tags:           a list of keywords used to associate adverbs and verbs
+        tags:           a list of keywords used to associate adjectives and verbs
         is_infinite:    bool that sets if the word has finite usage
     """
-
-    def setup(self, subject, target=None, other_word=None):
-        raise NotImplementedError
-
-    def execute(self, subject, target=None, other_word=None):
-        raise NotImplementedError
 
     @staticmethod
     def get_all_verbs():
@@ -74,18 +71,28 @@ class Verb(Word):
         """
         return [verb() for verb in Verb.__subclasses__()]
 
+    def setup(self, subject, target=None, adjective=None):
+        raise NotImplementedError
+
+    def execute(self, subject, target=None, adjective=None):
+        raise NotImplementedError
+
 
 class Adjective(Word):
     """
     Abstract implementation of an adjective
     Adjectives have tags, just like verbs
     If an adjective's tag matches the tag of a verb, it means the adjective can modify that verb in some way
+    modify_verb is called before setup to modift the tags of the verb itself
     """
 
-    def setup(self, subject, target=None, other_word=None):
+    def modify_verb(self, subject, verb, target=None):
         raise NotImplementedError
 
-    def execute(self, subject, target=None, other_word=None):
+    def setup(self, subject, target=None, verb=None):
+        raise NotImplementedError
+
+    def execute(self, subject, target=None, verb=None):
         raise NotImplementedError
 
     @staticmethod

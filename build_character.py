@@ -3,7 +3,7 @@ import combat_arena
 from player import Player
 from stats import *
 from verbs import *
-from adverbs import *
+from adjectives import *
 from util import *
 
 # evil globals
@@ -86,9 +86,9 @@ def choose_words(points=100):
     :return:
     """
     verb_list = Verb.__subclasses__()
-    adverb_list = Adverb.__subclasses__()
+    adverb_list = Adjective.__subclasses__()
     valid_words = [x.name.lower() for x in Verb.__subclasses__()] + [x.name.lower() for x in
-                                                                     Adverb.__subclasses__()]
+                                                                     Adjective.__subclasses__()]
     while True:
         clear_screen()
         print_banner("Purchase Words")
@@ -106,9 +106,9 @@ def choose_words(points=100):
             print("Your Verbs: ")
             for key, val in player.verbs.items():
                 print('\t' + key + '\t' + str(val[1]))
-        if any(player.adverbs):
+        if any(player.adjectives):
             print("Your Adverbs: ")
-            for key, val in player.adverbs.items():
+            for key, val in player.adjectives.items():
                 print('\t' + key + '\t' + str(val[1]))
         # get user input
         word_name, count = parse_words(points, valid_words)

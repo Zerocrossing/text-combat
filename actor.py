@@ -14,7 +14,7 @@ class Actor:
         self.health = 0
         self.stamina = 100
         self.verbs = {}
-        self.adverbs = {}
+        self.adjectives = {}
         self.next_sentence = None
 
     def take_damage(self, dmg):

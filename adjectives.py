@@ -1,48 +1,7 @@
-class Adverb:
-    """
-    Abstract implementation of an Adverb
-    Adverbs have tags, just like verbs
-    If an adverb's tag matches the tag of a verb, it means the adverb can modify that verb in some way
-    is_universal means the adverb doesn't need to match tags to be used
-        eg) an adverb that makes you block a portion of the next attack can be used regardless of action
-    """
-
-    def __init__(self):
-        self.name = __class__
-        self.is_universal = False
-        self.freshness = 1.0
-        self.tags = []
-
-    def modify_verb(self, verb):
-        """
-        modify verb takes a verb and modifies it's attributes
-        which attributes are modified depends
-        """
-        raise NotImplementedError
-
-    def setup(self, subject, target=None, verb=None):
-        """
-        setup is run before damage and effects are assigned
-        damage reduction, blocks, and checks can be done here
-        it is not required and can be passed
-        """
-        raise NotImplementedError
-
-    def execute(self, subject, target=None, verb=None):
-        """
-        execute assigns damage and effects one setup has established
-        it is not required and can be passed
-        """
-        raise NotImplementedError
-
-    def get_description(self):
-        raise NotImplementedError
-
-    def __str__(self):
-        return self.name
+from words import *
 
 
-class Powerful(Adverb):
+class Powerful(Adjective):
     """
     Powerful doubles power and cost
     """
@@ -67,7 +26,7 @@ class Powerful(Adverb):
         pass
 
 
-class Restrained(Adverb):
+class Restrained(Adjective):
     """
     Restrained halves dmg and cost
     """
@@ -91,7 +50,8 @@ class Restrained(Adverb):
     def execute(self, subject, target=None, verb=None):
         pass
 
-class Stealthy(Adverb):
+
+class Stealthy(Adjective):
     """
     Stealthy increases damage by 5% for each point of cunning
     it increases cost for 2.5% for each point of cunning
