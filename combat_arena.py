@@ -94,9 +94,9 @@ class Goblin(actor.Actor):
     def __init__(self, difficulty=1):
         """
         creates a random goblin using a difficulty seed
-        stats are randomized with 4*difficulty
+        stats are randomized with 4*difficulty (roughly +1 to all stats per level)
         goblins are given all words
-        :param difficulty:
+        when they attack they pick an adjective and verb randomly
         """
         super().__init__()
         self.random_name()

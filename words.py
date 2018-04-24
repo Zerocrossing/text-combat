@@ -30,20 +30,24 @@ class Word:
                     return True
         return False
 
-    # def setup(self, subject, target=None, other_word=None):
-    #     """
-    #     setup is run before damage and effects are assigned
-    #     damage reduction, blocks, and checks can be done here
-    #     it is not required and can be passed
-    #     """
-    #     raise NotImplementedError
-    #
-    # def execute(self, subject, target=None, other_word=None):
-    #     """
-    #     execute assigns damage and effects after setup is run
-    #     it is not required and can be passed
-    #     """
-    #     raise NotImplementedError
+    @staticmethod
+    def get_word_from_name(name):
+        """
+        returns a default word object from a passed string
+        :param name: string of the word name
+        :return: a word object if the word is found, or none if not
+        """
+        for word in Verb.get_all_verbs() + Adjective.get_all_adjectives():
+            if word.name == name:
+                return word
+        return None
+
+    def modify_freshness(self, value):
+        self.freshness += value
+        if self.freshness < 0:
+            self.freshness = 0
+        if self.freshness > 1.0:
+            self.freshness = 1.0
 
     def __str__(self):
         return self.name
@@ -67,6 +71,7 @@ class Verb(Word):
     @staticmethod
     def get_all_verbs():
         """
+        todo: cache this
         :return: a list of objects each representing a default verb
         """
         return [verb() for verb in Verb.__subclasses__()]
@@ -98,6 +103,7 @@ class Adjective(Word):
     @staticmethod
     def get_all_adjectives():
         """
+        todo: cache this
         :return: a list of objects each representing a default verb
         """
         return [adjective() for adjective in Adjective.__subclasses__()]

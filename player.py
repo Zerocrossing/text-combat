@@ -6,12 +6,13 @@ verbs and adverbs:
 
 """
 
+from actor import *
 from stats import Stats
 from verbs import Verb
 from adjectives import Adjective
 
 
-class Player:
+class Player(Actor):
     def __init__(self):
         self.name = None
         self.stats = Stats()
