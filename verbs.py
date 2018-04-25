@@ -10,12 +10,11 @@ class Kick(Verb):
     Stamina scales with cost
     tags: power, cost
     """
-    name = "kick"
-    description = "A basic kick. Deals damage based on strength."
 
     def __init__(self):
         super().__init__()
         self.name = 'kick'
+        self.description = "A basic kick. Deals damage based on strength."
         self.tags = ['power', 'damage', 'cost']
         self.power = 1.0
         self.damage = 1.0
@@ -46,6 +45,7 @@ class SneakAttack(Verb):
     Stamina scales with cost
     tags: power, damage, cost
     """
+
     def __init__(self):
         super().__init__()
         self.name = "sneak attack"

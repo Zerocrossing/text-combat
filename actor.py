@@ -83,6 +83,28 @@ class Actor:
 
     # region word and sentence methods
 
+    def get_verbs(self, usable=False):
+        """
+        Returns a list of all the verb objects this actor has
+        :param usable: If True will only return words with a count > 0
+        :return: list of Verb objects
+        """
+        if not usable:
+            return [word for word in self.words if isinstance(word, Verb)]
+        else:
+            return [word for word in self.words if isinstance(word, Verb) and self.words[word] > 0]
+
+    def get_adjectives(self, usable=False):
+        """
+        Returns a list of all the verb objects this actor has
+        :param usable: If True will only return words with a count > 0
+        :return: list of Verb objects
+        """
+        if not usable:
+            return [word for word in self.words if isinstance(word, Adjective)]
+        else:
+            return [word for word in self.words if isinstance(word, Adjective) and self.words[word] > 0]
+
     def get_word_by_name(self, word_name):
         """
         Checks if this actor has a word called word_name
@@ -94,7 +116,7 @@ class Actor:
                 return word
         return None
 
-    def add_word(self, word):
+    def add_word(self, word, count=1):
         """
         adds a word if it doesnt exist
         if the word does exist, increment it's value by 1
@@ -112,12 +134,12 @@ class Actor:
         if not isinstance(word, Word):
             raise Exception("Unable to add word", word)
         if word in self.words:
-            self.words[word] += 1
+            self.words[word] += count
         else:
             if word.is_infinite:
                 self.words[word] = math.inf
             else:
-                self.words[word] = 1
+                self.words[word] = count
 
     def use_word(self, word):
         """

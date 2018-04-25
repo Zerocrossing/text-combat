@@ -13,7 +13,8 @@ from util import *
 def begin(fighter):
     difficulty = 0
     while True:
-        difficulty +=1
+        difficulty += 1
+        fighter.health = fighter.get_max_health()
         clear_screen()
         print_banner("Welcome To The Arena")
         print("You are at level {}".format(difficulty))
@@ -43,31 +44,29 @@ def combat(fighter, opponent):
 
 
 def player_turn(fighter, opponent):
-    if any(fighter.verbs):
-        print("Your Verbs: ")
-        for key, val in fighter.verbs.items():
-            print('\t' + key + '\t' + str(val[1]))
+    print("Your Verbs: ")
+    for verb in fighter.get_verbs():
+        print("{:<15}: {}".format(verb.name, fighter.words[verb]))
     while True:
         verb = input("What would you like to do? (choose a verb)")
-        if verb not in fighter.verbs.keys():
+        verb = fighter.get_word_by_name(verb)
+        if verb is None:
             print("That is not a valid action.")
             continue
-        verb = fighter.verbs[verb][0]
-        # print("You have selected {}".format(verb.name))
         break
-    if any(fighter.adjectives):
+    if any(fighter.get_adjectives()):
         print("Your adjectives: ")
-        for key, val in fighter.adjectives.items():
-            print('\t' + key + '\t' + str(val[1]))
+        for adjective in fighter.get_adjectives():
+            print("{:<15}: {}".format(adjective.name, fighter.words[adjective]))
     while True:
-        adjective = input("What kind of {}? (choose an adjective)".format(verb.name))
-        if adjective not in fighter.adjectives.keys():
+        adjective = input("What kind of {}? (choose an adjective or None)".format(verb.name))
+        if adjective == "none":
+            adjective = None
+        elif fighter.get_word_by_name(adjective) is None:
             print("That is not a valid action.")
             continue
-        adjective = fighter.adjectives[adjective][0]
-        # print("You have selected {}".format(adjective.name))
+        adjective = fighter.get_word_by_name(adjective)
         break
-
     sentence = Sentence(fighter, verb, adjective, opponent)
     return sentence
 
@@ -100,6 +99,8 @@ class Goblin(actor.Actor):
         """
         super().__init__()
         self.random_name()
+        self.give_all_words()
+        # randomize stats
         rand_stats = [1, 1, 1, 1]
         points = 4 * difficulty
         while points > 0:
@@ -107,8 +108,10 @@ class Goblin(actor.Actor):
             rand_stats[num] += 1
             points -= 1
         self.stats.set_stats(rand_stats)
-        self.give_all_words()
         self.health = 10 * self.stats.endurance
+
+    def modify_stat(self, stat, value):
+        pass
 
     def take_damage(self, dmg):
         value = round(dmg)
@@ -125,16 +128,14 @@ class Goblin(actor.Actor):
         return sentence
 
     def give_all_words(self):
-        for verb in Verb.__subclasses__():
-            word = verb()
-            self.verbs[word.name] = [word, 99]
-        for adjective in Adjective.__subclasses__():
-            word = adjective()
-            self.adjectives[word.name] = [word, 99]
+        verbs = Verb.get_all_verbs()
+        adjectives = Adjective.get_all_adjectives()
+        for word in verbs + adjectives:
+            self.add_word(word, 99)
 
     def create_random_sentence(self, target):
-        verb = random.choice([v[0] for v in self.verbs.values()])
-        adjective = random.choice([adv[0] for adv in self.adjectives.values()])
+        verb = random.choice(self.get_verbs(usable=True))
+        adjective = random.choice(self.get_adjectives(usable=True))
         sentence = Sentence(self, verb, adjective, target)
         return sentence
 

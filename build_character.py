@@ -1,4 +1,5 @@
 import os
+from actor import Actor
 import combat_arena
 from player import Player
 from stats import *
@@ -7,7 +8,7 @@ from adjectives import *
 from util import *
 
 # evil globals
-player = Player()
+player = Actor()
 
 
 # region Character Creation
@@ -16,10 +17,10 @@ def intro():
     Prompts for character name and moves to stat selection
     """
     print_banner('Character Creation')
-    while (True):
+    while True:
         usrin = input('Enter your character name: ')
         if usrin is None or usrin == "" or usrin[0] == " ":
-            print("That name makes no goddamn sense. Try again: ")
+            print("Invalid name. Try again: ")
         else:
             player.name = usrin
             break
@@ -31,7 +32,7 @@ def choose_stats(points=25):
     Point buy system for stats
     After points are reduced to 0 choose_words is executed
     """
-    while (True):
+    while True:
         clear_screen()
         print_banner(player.name.title() + "'s stats")
         print(str(points) + " Points Remaining")
@@ -79,51 +80,44 @@ def parse_stats(points):
         return points
 
 
-def choose_words(points=100):
+def choose_words(points=4):
     """
     Goes into a point-buy system where the player is allowed to purchase words
-    :param points:
-    :return:
     """
-    verb_list = Verb.__subclasses__()
-    adverb_list = Adjective.__subclasses__()
-    valid_words = [x.name.lower() for x in Verb.__subclasses__()] + [x.name.lower() for x in
-                                                                     Adjective.__subclasses__()]
+    verb_list = Verb.get_all_verbs()
+    adjective_list = Adjective.get_all_adjectives()
+
     while True:
         clear_screen()
         print_banner("Purchase Words")
         print("Your points: " + str(points))
-        print("\nVerbs: (10 each)")
+        print("\nVerbs:")
         for verb in verb_list:
             out = "\t{:<15}: {}".format(verb.name, verb.description)
             print(out)
-        print("\nAdverbs: (10 each)")
-        for adverb in adverb_list:
-            out = "\t{:<15}: {}".format(adverb.name, adverb.description)
+        print("\nAdjectives:")
+        for adjective in adjective_list:
+            out = "\t{:<15}: {}".format(adjective.name, adjective.description)
             print(out)
-        print('*'*10)
-        if any(player.verbs):
-            print("Your Verbs: ")
-            for key, val in player.verbs.items():
-                print('\t' + key + '\t' + str(val[1]))
-        if any(player.adjectives):
-            print("Your Adverbs: ")
-            for key, val in player.adjectives.items():
-                print('\t' + key + '\t' + str(val[1]))
+        print('*' * 10)
+        print("Your Verbs: ")
+        for word, count in player.words.items():
+            if isinstance(word, Verb):
+                print("{:<10}: {}".format(word.name, count))
+        print("Your Adjectives: ")
+        for word, count in player.words.items():
+            if isinstance(word, Adjective):
+                print("{:10}: {}".format(word.name, count))
         # get user input
-        word_name, count = parse_words(points, valid_words)
-        for word in verb_list + adverb_list:
-            if word.name.lower() == word_name.lower():
-                new_word = word()
-                player.add_word(new_word, count)
-                points -= (count * 10)
+        word_name, count = parse_words(points)
+        player.add_word(word_name, count=count)
+        points -= count
         if points == 0:
             break
     combat_arena.begin(player)
 
 
-
-def parse_words(points, valid_words):
+def parse_words(points):
     """
     User interface for purchasing words
     todo: have a cost associated with words?
@@ -150,10 +144,10 @@ def parse_words(points, valid_words):
         number = int(number)
         if direction == 'remove':
             number *= -1
-        if word_name not in valid_words:
+        if Word.get_word_from_name(word_name) is None:
             print("sorry " + usrin[2] + " is not a valid word name")
             continue
-        if (points - number * 10) < 0:
+        if (points - number) < 0:
             print("you don't have enough points for that")
             continue
         # add stats
@@ -166,12 +160,9 @@ def parse_words(points, valid_words):
 # region Word Selection
 
 
-
 # endregion
 
 
 if __name__ == "__main__":
-    print("garbage")
     clear_screen()
     intro()
-    os.system('clear')
