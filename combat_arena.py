@@ -2,7 +2,6 @@
 pits the player against a random goblin
 """
 import actor
-import player
 import random
 from verbs import *
 from adjectives import *

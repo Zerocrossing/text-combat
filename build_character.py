@@ -1,7 +1,6 @@
 import os
 from actor import Actor
 import combat_arena
-from player import Player
 from stats import *
 from verbs import *
 from adjectives import *
