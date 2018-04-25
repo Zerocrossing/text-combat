@@ -22,7 +22,8 @@ class Actor:
         self.words = {}
         self.next_sentence = None
         # constants and privates
-        self._freshness_loss = -0.25
+        self.freshness_loss = -0.25
+        self.freshness_gain = 0.10
 
     # region Stat and Stat-Based Getters
     def get_max_health(self):
@@ -121,6 +122,7 @@ class Actor:
         adds a word if it doesnt exist
         if the word does exist, increment it's value by 1
         :param word: word object or string name of word
+        :param count: number of word instances to add
         """
         # if a string is passed, check if the actor has the word, if not get it from the master word list
         if type(word) is str:
@@ -157,7 +159,7 @@ class Actor:
         if self.words[word] <= 0:
             raise Exception("Cannot use finite word with no uses", word)
         self.words[word] -= 1
-        word.modify_freshness(self._freshness_loss)
+        word.modify_freshness(self.freshness_loss)
 
     def remove_word(self, word):
         """
@@ -170,6 +172,18 @@ class Actor:
         if word not in self.words:
             raise Exception("Actor does not have word to remove", word)
         del self.words[word]
+
+    def refresh_all(self, excluded=[]):
+        """
+        Refreshes all words (excepting any passed as excluded) by the value of .freshness_gain
+        Should be called once per round
+        :param excluded: a list of word objects to be excluded (typically words used last round)
+        :return:
+        """
+        for word in self.words:
+            if word in excluded:
+                continue
+            word.modify_freshness(self.freshness_gain)
 
     # endregion
 

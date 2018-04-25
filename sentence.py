@@ -11,6 +11,7 @@ class Sentence:
         """
         creates a sentence
         creates copies of the verb and adjective to modify their values
+        maintains a reference to the subject's original words to call their methods
         :param subject: whoever is making the action
         :param verb: the action to take
         :param adjective: modifies the verb
@@ -18,6 +19,8 @@ class Sentence:
         """
         self.subject = subject
         self.target = target
+        self.subject_verb = verb
+        self.subject_adjective = adjective
         self.verb = copy.deepcopy(verb)
         self.adjective = copy.deepcopy(adjective)
 
@@ -28,9 +31,23 @@ class Sentence:
         self.verb.setup(self.subject, self.target, self.adjective)
 
     def execute(self):
+        """
+        Execute performs the actions of the sentence after setup has initialized all values
+        It calls the execute() method of the verb and adjective (if available)
+        It then calls the actor's use_word() method (using the name because the objects have been copied)
+        :return:
+        """
+        # call execute methods
         if self.adjective is not None:
             self.adjective.execute(self.subject, self.target, self.verb)
         self.verb.execute(self.subject, self.target, self.adjective)
+        # call subject's use_word and refresh_all, excluding any words used this round
+        exclude = [self.subject_verb]
+        self.subject.use_word(self.subject_verb)
+        if self.subject_adjective is not None:
+            self.subject.use_word(self.subject_adjective)
+            exclude.append(self.subject_adjective)
+        self.subject.refresh_all(excluded=exclude)
 
     def __str__(self):
         if self.adjective is None:
@@ -39,5 +56,5 @@ class Sentence:
             sentence = "{!s} used {!s} {!s}".format(self.subject, self.adjective, self.verb)
         if self.target:
             sentence += " on {!s}".format(self.target)
-        sentence += '\n' + '-'*25
+        sentence += '\n' + '-' * 25
         return sentence

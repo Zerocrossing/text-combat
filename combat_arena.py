@@ -8,8 +8,9 @@ from adjectives import *
 from sentence import *
 from util import *
 
-#evil globals
+# evil globals
 difficulty = 0
+
 
 def begin(fighter):
     while True:
@@ -32,10 +33,11 @@ def combat(fighter, opponent):
         if opponent.is_dead():
             victory()
             return
-        print('*'*25)
+        print('*' * 25)
         print("{:<16} {:<5} \t {:<17} {}".format('Your Health:', fighter.health, 'Your Stamina:', fighter.stamina))
         print(
-            "{:<16} {:<5} \t {:<17} {}".format('Opponent Health:', opponent.health, 'Opponent Stamina:', opponent.stamina))
+            "{:<16} {:<5} \t {:<17} {}".format('Opponent Health:', opponent.health, 'Opponent Stamina:',
+                                               opponent.stamina))
         print("*" * 25)
         player_sentence = player_turn(fighter, opponent)
         clear_screen()
@@ -49,22 +51,22 @@ def combat(fighter, opponent):
 
 
 def player_turn(fighter, opponent):
-    print("Your Verbs: ")
+    print("{:<15} {:<10} {}".format("Your verbs", "Freshness", "Uses"))
     for verb in fighter.get_verbs():
-        print("{:<15}: {}".format(verb.name, fighter.words[verb]))
+        print("{:<15} {:<10} {}".format(verb.name, int(verb.freshness*100), fighter.words[verb]))
     while True:
-        verb = input("What would you like to do? (choose a verb)\n")
+        verb = input("\nWhat would you like to do? (choose a verb):")
         verb = fighter.get_word_by_name(verb)
         if verb is None:
             print("That is not a valid action.")
             continue
         break
     if any(fighter.get_adjectives()):
-        print("Your adjectives: ")
+        print("{:<15} {:<10} {}".format("Your Adjectives", "Freshness", "Uses"))
         for adjective in fighter.get_adjectives():
-            print("{:<15}: {}".format(adjective.name, fighter.words[adjective]))
+            print("{:<15} {:<10} {}".format(adjective.name, int(adjective.freshness * 100), fighter.words[adjective]))
     while True:
-        adjective = input("What kind of {}? (choose an adjective or None)\n".format(verb.name))
+        adjective = input("\nWhat kind of {}? (choose an adjective or None): ".format(verb.name))
         if adjective == "none":
             adjective = None
         elif fighter.get_word_by_name(adjective) is None:

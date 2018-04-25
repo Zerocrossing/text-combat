@@ -68,8 +68,8 @@ class Stealthy(Adjective):
         pass
 
     def setup(self, subject, target=None, verb=None):
-        verb.power *= 0.5 * subject.stats.cunning
-        verb.cost *= 0.25 * subject.stats.cunning
+        verb.power += 0.05 * subject.stats.cunning
+        verb.cost += 0.025 * subject.stats.cunning
 
     def execute(self, subject, target=None, verb=None):
         pass
