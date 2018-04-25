@@ -39,4 +39,5 @@ class Sentence:
             sentence = "{!s} used {!s} {!s}".format(self.subject, self.adjective, self.verb)
         if self.target:
             sentence += " on {!s}".format(self.target)
+        sentence += '\n' + '-'*25
         return sentence

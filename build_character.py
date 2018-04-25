@@ -89,7 +89,7 @@ def choose_words(points=4):
     while True:
         clear_screen()
         print_banner("Purchase Words")
-        print("Your points: " + str(points))
+        print("Purchases Available: " + str(points))
         print("\nVerbs:")
         for verb in verb_list:
             out = "\t{:<15}: {}".format(verb.name, verb.description)
@@ -103,13 +103,16 @@ def choose_words(points=4):
         for word, count in player.words.items():
             if isinstance(word, Verb):
                 print("{:<10}: {}".format(word.name, count))
-        print("Your Adjectives: ")
+        print("\nYour Adjectives: ")
         for word, count in player.words.items():
             if isinstance(word, Adjective):
                 print("{:10}: {}".format(word.name, count))
         # get user input
         word_name, count = parse_words(points)
-        player.add_word(word_name, count=count)
+        if count == 1:
+            player.add_word(word_name, count=count)
+        if count == -1:
+            player.remove_word(word_name)
         points -= count
         if points == 0:
             break
@@ -121,35 +124,29 @@ def parse_words(points):
     User interface for purchasing words
     todo: have a cost associated with words?
     :param points: remaining points
-    :param valid_words: a list of valid word names
-    :return: a list with [0] being the string word name and [1] being the count
+    :return: a valid word name
     """
     while (True):
-        usrin = input()
-        usrin = usrin.split(' ', 2)
+        usrin = input("add or remove words: eg) 'add kick': ")
+        usrin = usrin.split(' ', 1)
         # error checking
-        if len(usrin) < 3:
+        if len(usrin) < 2:
             print("Sorry, I don't understand")
             continue
         direction = usrin[0].lower()
-        number = usrin[1]
-        word_name = usrin[2].lower()
+        word_name = usrin[1].lower()
         if direction != 'add' and direction != 'remove':
             print('command must start with add or remove')
             continue
-        if not number.isdigit():
-            print("you need to add or remove by a number")
-            continue
-        number = int(number)
+        number = 1
         if direction == 'remove':
-            number *= -1
+            number = -1
         if Word.get_word_from_name(word_name) is None:
-            print("sorry " + usrin[2] + " is not a valid word name")
+            print("sorry " + usrin[1] + " is not a valid word name")
             continue
         if (points - number) < 0:
             print("you don't have enough points for that")
             continue
-        # add stats
         return [word_name, number]
 
 

@@ -8,10 +8,12 @@ from adjectives import *
 from sentence import *
 from util import *
 
+#evil globals
+difficulty = 0
 
 def begin(fighter):
-    difficulty = 0
     while True:
+        global difficulty
         difficulty += 1
         fighter.health = fighter.get_max_health()
         clear_screen()
@@ -30,9 +32,13 @@ def combat(fighter, opponent):
         if opponent.is_dead():
             victory()
             return
-        print("Your health: {:<15} \t Your Stamina: {}".format(fighter.health, fighter.stamina))
-        print("Opponent health: {:<15} \t Opponent Stamina: {}".format(opponent.health, opponent.stamina))
+        print('*'*25)
+        print("{:<16} {:<5} \t {:<17} {}".format('Your Health:', fighter.health, 'Your Stamina:', fighter.stamina))
+        print(
+            "{:<16} {:<5} \t {:<17} {}".format('Opponent Health:', opponent.health, 'Opponent Stamina:', opponent.stamina))
+        print("*" * 25)
         player_sentence = player_turn(fighter, opponent)
+        clear_screen()
         opponent_sentence = opponent.take_turn(fighter)
         player_sentence.setup()
         opponent_sentence.setup()
@@ -47,7 +53,7 @@ def player_turn(fighter, opponent):
     for verb in fighter.get_verbs():
         print("{:<15}: {}".format(verb.name, fighter.words[verb]))
     while True:
-        verb = input("What would you like to do? (choose a verb)")
+        verb = input("What would you like to do? (choose a verb)\n")
         verb = fighter.get_word_by_name(verb)
         if verb is None:
             print("That is not a valid action.")
@@ -58,7 +64,7 @@ def player_turn(fighter, opponent):
         for adjective in fighter.get_adjectives():
             print("{:<15}: {}".format(adjective.name, fighter.words[adjective]))
     while True:
-        adjective = input("What kind of {}? (choose an adjective or None)".format(verb.name))
+        adjective = input("What kind of {}? (choose an adjective or None)\n".format(verb.name))
         if adjective == "none":
             adjective = None
         elif fighter.get_word_by_name(adjective) is None:
@@ -73,6 +79,7 @@ def player_turn(fighter, opponent):
 def game_over():
     clear_screen()
     print_banner("YOU DIED")
+    print("You made it to level {}".format(difficulty))
     quit()
 
 
