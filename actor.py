@@ -1,12 +1,13 @@
 """
 Actors represent entities who can be the subjects and targets of sentences
 verbs and adverbs:
-    stored in a dictionary keyed off the word name
-    the value is a list of size 2, the first element is the word object, the second the count of words available
-    if the word is infinite count is a meaningless number
+    stored in a dictionary keyed off the word object
+    the value of the dict is -1 if the word is infinite, otherwise it is the number of uses remaining
 """
 from stats import *
 from words import *
+from verbs import *
+from adjectives import *
 import random
 
 
@@ -23,7 +24,7 @@ class Actor:
         self.adjectives = {}
         self.next_sentence = None
         # constants and privates
-        self._freshness_loss = 0.25
+        self._freshness_loss = -0.25
 
     # region Stat and Stat-Based Getters
     def get_max_health(self):
@@ -87,63 +88,92 @@ class Actor:
 
     # region word and sentence methods
 
-    def add_word(self, word_name):
+    def get_word_by_name(self, word_name):
+        """
+        Checks if this actor has a word called word_name
+        :param word_name: string name of a word
+        :return: The word object if it exists, None if it does not
+        """
+        for word in self.verbs.keys():
+            if word.name == word_name:
+                return word
+        for word in self.adjectives.keys():
+            if word.name == word_name:
+                return word
+        return None
+
+    def add_word(self, word):
         """
         adds a word if it doesnt exist
         if the word does exist, increment it's value by 1
-        :param word_name: name of the word (will also accept word object directly)
-        :return:
+        :param word: word object or string name of word
         """
-        # if word_name is a word object, get it's name
-        if type(word_name) is not str:
-            word_name = word_name.name
-        # check if the word already exists in verbs or adjectives
-        if word_name in self.verbs:
-            self.verbs[word_name][1] += 1
-        elif word_name in self.adjectives:
-            self.adjectives[word_name][1] += 1
-        # add word if it doesn't exist
+        # if a string is passed, check if the actor has the word, if not get it from the master word list
+        if type(word) is str:
+            new_word = self.get_word_by_name(word)
+            if new_word is None:
+                new_word = Word.get_word_from_name(word)
+                if new_word is None:
+                    raise Exception("Cannot find word to add to actor", word)
+            word = new_word
+        # get reference to dictionary based on type of word
+        word_dict = None
+        if isinstance(word, Verb):
+            word_dict = self.verbs
+        elif isinstance(word, Adjective):
+            word_dict = self.adjectives
         else:
-            word_obj = Word.get_word_from_name(word_name)
-            if word_obj is None:
-                raise Exception("Word not found")
-            if isinstance(word_obj, Verb):
-                self.verbs[word_obj.name] = [word_obj, 1]
-            elif isinstance(word_obj, Adjective):
-                self.adjectives[word_obj.name] = [word_obj, 1]
+            raise Exception("Attempting to add word of unknown type", word)
+        # if player already has the word, increment (if it's not infinite)
+        if word in self.verbs or word in self.adjectives:
+            if not word.is_infinite:
+                word_dict[word] += 1
+        # otherwise add the word to the dictionary
+        else:
+            if word.is_infinite:
+                word_dict[word] = -1
             else:
-                raise Exception("Attempting to add a word of an unknown type", type(word_obj))
+                word_dict[word] = 1
 
-    def use_word(self, word_name):
+    def use_word(self, word):
         """
         Called whenever a word is used
         Decrements the value if the word is finite
+        Removes the word if it is finite and decremented to 0 count
         Decreases the words freshness
-        :param word_name: string name of word or reference to object/type
-        :return: None
+        :param word: word object to use or name of word
         """
-        # make sure word_name is a string to key the dict
-        if type(word_name) is not str:
-            word_name = word_name.name
-        # get reference to the object from the lists
-        word_obj = None
+        # if a string is passed, check if the actor has the word
+        if type(word) is str:
+            word = self.get_word_by_name(word)
+            if word is None:
+                raise Exception("Actor does not have word to use", word)
+        # get reference to dictionary based on type of word
         word_dict = None
-        if word_name in self.verbs:
-            word_obj = self.verbs[word_name][0]
+        if isinstance(word, Verb):
             word_dict = self.verbs
-        elif word_name in self.adjectives:
-            word_obj = self.adjectives[word_name][0]
+        elif isinstance(word, Adjective):
             word_dict = self.adjectives
-        if word_obj is None or word_dict is None:
-            raise Exception("Word not found")
-        # decrement count if object isn't infinite, remove obj if count is 0
-        if not word_obj.is_infinite:
-            word_dict[word_name][1] -= 1
-            if word_dict[word_name][1] == 0:
-                self.remove_word(word_name)
-        word_obj.modify_freshness(-self._freshness_loss)
+        else:
+            raise Exception("Attempting to use word of unknown type", word)
+        if word not in word_dict:
+            raise Exception("Actor does not have word to use", word)
+        # if word is finite, decrement count and remove word if count is 0
+        if not word.is_infinite:
+            word_dict[word] -= 1
+            if word_dict[word] == 0:
+                self.remove_word(word)
+        word.modify_freshness(self._freshness_loss)
 
-    def remove_word(self, word_name):
-        raise NotImplementedError
+    def remove_word(self, word):
+        """
+        Removes a word from the actor's list of words
+        :param word:
+        :return:
+        """
+        if type(word) is str:
+            word = self.get_word_by_name(word)
+            if word is None:
+                raise Exception("Actor does not have word to use", word)
 
     # endregion
