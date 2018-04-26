@@ -1,5 +1,5 @@
 """
-Stats is a module that represents and Entity's Physical Abilities
+Stats is a class that represents an actor's Physical Abilities
 """
 
 
@@ -26,14 +26,14 @@ class Stats:
     def set_stats(self, stats):
         """
         Sets stats in accordance with a passed list
-	Used to randomize stats on NPC creation
+        Used to randomize stats on NPC creation
         :param stats: a list of size 4
         :return: None
         """
-        self.strength=stats[0]
-        self.cunning=stats[1]
-        self.endurance=stats[2]
-        self.intelligence=stats[3]
+        self.strength = stats[0]
+        self.cunning = stats[1]
+        self.endurance = stats[2]
+        self.intelligence = stats[3]
 
     def __str__(self):
         """

@@ -1,6 +1,5 @@
 """
 Actors represent entities who can be the subjects and targets of sentences
-words are stored in a dict keyed by word objects, where value is the count (int or math.inf)
 """
 from stats import *
 import random
@@ -33,9 +32,10 @@ class Actor:
         """
         initiate determines a character's order in combat
         1-5 per 2 points of cunning
+        todo: this isn't used, or correct
         :return: initiative value as int
         """
-        return (self.cunning / 2) * random.randint(1, 5)
+        return random.randint(1 * (self.cunning / 2), 5 * (self.cunning / 2))
 
     def is_dead(self):
         return self.health <= 0
@@ -56,7 +56,7 @@ class Actor:
 
     def modify_stamina(self, value):
         """
-        Lowers stamina by the passed amount
+        Adjusts stamina by the passed value
         """
         value = round(value)
         self.stamina += value
@@ -147,9 +147,9 @@ class Actor:
         """
         Called whenever a word is used
         Decrements the value if the word is finite
-        Removes the word if it is finite and decremented to 0 count
         Decreases the words freshness
         :param word: word object to use or name of word to search for word in actor's word list
+        note: if passing a word object it must be the object in the actor's word list
         """
         # if a string is passed, check if the actor has the word
         if type(word) is str:

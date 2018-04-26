@@ -1,3 +1,10 @@
+"""
+Adjectives Module
+Contains all classes derived from Adjective
+Adjectives are used in sentences to modify verbs
+This is done by linking tags on the two objects, if a tag is shared, the adjective can modify the verb in some way
+"""
+
 from words import *
 
 
@@ -12,12 +19,12 @@ class Powerful(Adjective):
         super().__init__()
         self.name = 'powerful'
         self.tags = ['power', 'cost']
-        self.power = 2.0
-        self.cost = 2.0
+        self.power_mod = 2.0
+        self.cost_mod = 2.0
 
     def modify_verb(self, verb):
-        verb.power *= self.power
-        verb.cost *= self.cost
+        verb.power *= self.power_mod
+        verb.cost *= self.cost_mod
 
     def setup(self, subject, target=None, verb=None):
         pass
@@ -30,19 +37,17 @@ class Restrained(Adjective):
     """
     Restrained halves dmg and cost
     """
-    name = 'restrained'
-    description = 'Decreases power and cost'
-
     def __init__(self):
         super().__init__()
         self.name = 'restrained'
+        self.description = 'Decreases power and cost'
         self.tags = ['power', 'cost']
-        self.power = 0.5
-        self.cost = 0.5
+        self.power_mod = 0.5
+        self.cost_mod = 0.5
 
     def modify_verb(self, verb):
-        verb.power *= self.power
-        verb.cost *= self.cost
+        verb.power *= self.power_mod
+        verb.cost *= self.cost_mod
 
     def setup(self, subject, target=None, verb=None):
         pass
@@ -63,13 +68,15 @@ class Stealthy(Adjective):
         super().__init__()
         self.name = 'stealthy'
         self.tags = ['power', 'cost']
+        self.power_mod = 0.05
+        self.cost_mod = 0.025
 
     def modify_verb(self, verb):
         pass
 
     def setup(self, subject, target=None, verb=None):
-        verb.power += 0.05 * subject.stats.cunning
-        verb.cost += 0.025 * subject.stats.cunning
+        verb.power += self.power_mod * subject.stats.cunning
+        verb.cost += self.cost_mod * subject.stats.cunning
 
     def execute(self, subject, target=None, verb=None):
         pass

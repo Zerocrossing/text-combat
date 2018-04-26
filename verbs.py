@@ -1,3 +1,10 @@
+"""
+Verbs Module
+Contains all the classes derived from Verb
+Each verb represents an action an actor may take during their turn
+While all verbs must implement setup and execute, they can be passed if they are not required
+"""
+
 import random
 from words import *
 

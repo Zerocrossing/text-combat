@@ -1,6 +1,11 @@
 """
-Sentence creates a sentence object from a verb and (optionally) and adjective
-It contains methods for setup and execution of the full sentence
+Sentences represent actions that actors can take
+A sentence is created from a verb and an optional adjective to modify the verb
+Sentence execution happens in 3 phases:
+    Firstly the setup() method has the adjective modify the verb when appropriate
+    Secondly the sentence is executed by calling the execute methods of the words
+    Lastly the actor's use_word() method is called which will decrease freshness and count if the word is finite
+While not every sentence will use the full list of subject, verb, adjective and target, they should always be passed
 """
 import copy
 

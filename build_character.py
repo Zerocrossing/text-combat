@@ -1,3 +1,9 @@
+"""
+Build Character
+Running main will start a simple text based interface that prompts the user to create a character
+After the character is created combat_arena.begin() is called to test the character in a dummy arena
+"""
+
 import os
 from actor import Actor
 import combat_arena

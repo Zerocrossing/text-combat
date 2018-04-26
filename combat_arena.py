@@ -1,5 +1,5 @@
 """
-pits the player against a random goblin
+pits the player against successive random goblins with increasing stats
 """
 import actor
 import random

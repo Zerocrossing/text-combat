@@ -7,6 +7,13 @@ class Word:
     """
     Abstract class to represent all words
     Words are used in encounter scenarios to construct sentences which represent actor actions
+    Attributes:
+        freshness: a measure of how often the word has been used, most words should scale in effect with freshness
+        tags: a list of strings associated with the word, eg "power" or "cost"
+              tags are used to determine whether or not two words can interact, to do so they must share a tag
+        is_infinite: boolean that determines whether or not the actor has a finite use of the word
+        is_universal: if true, will cause two words to be viable regardless of tags, should only be used on adjectives
+        description: text description of the word that should give the player an idea of what it does
     """
 
     def __init__(self):
@@ -55,26 +62,13 @@ class Word:
 
 class Verb(Word):
     """
-    Abstract implementation of a Verb
+    Abstract implementation of a Verb, derived from Word
     Verbs represent actions an actor can perform
-    Verbs have tags representing attributes
-    These attributes modify the verb's performance in some way
+    Verbs have tags that all modify the verbs performance in some way
     Verb execution is broken into 2 phases, setup and execute
     Setup is performed before actions are executed, and allows for things like blocking incoming damage
     Execute performs the action
-    attributes:
-        freshness:      a metric that modifies power and decreases with each usage of the word
-        tags:           a list of keywords used to associate adjectives and verbs
-        is_infinite:    bool that sets if the word has finite usage
     """
-
-    @staticmethod
-    def get_all_verbs():
-        """
-        todo: cache this
-        :return: a list of objects each representing a default verb
-        """
-        return [verb() for verb in Verb.__subclasses__()]
 
     def setup(self, subject, target=None, adjective=None):
         raise NotImplementedError
@@ -82,13 +76,23 @@ class Verb(Word):
     def execute(self, subject, target=None, adjective=None):
         raise NotImplementedError
 
+    @staticmethod
+    def get_all_verbs():
+        """
+        todo: cache this?
+        :return: a list of objects each representing a default verb
+        """
+        return [verb() for verb in Verb.__subclasses__()]
+
 
 class Adjective(Word):
     """
     Abstract implementation of an adjective
     Adjectives have tags, just like verbs
     If an adjective's tag matches the tag of a verb, it means the adjective can modify that verb in some way
-    modify_verb is called before setup to modift the tags of the verb itself
+    modify_verb is called before setup to modify the tags of the verb itself
+    currently all tags are implemented as floats representing a percentage of effectiveness
+    eg) a verb with power = 1.0 will be 100% effective, multiplying the power by 2 will double it's effect
     """
 
     def modify_verb(self, subject, verb, target=None):
